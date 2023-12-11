@@ -22,7 +22,7 @@ def createJWT(payload:User, secret):
     return jwt.encode({
         "username": payload.username,
         "is_admin": payload.is_admin,
-        "exp": datetime.utcnow() + timedelta(minutes=1),
+        "exp": datetime.utcnow() + timedelta(minutes=150),
         "iat": datetime.utcnow()
     }, key=secret)
 
@@ -32,6 +32,7 @@ def sign_user(username, pwd) -> api_response:
     """
     try:
         user = db.query(username)
+        print(user.username)
         if pwd != user.pwd:
             return ({"message": "Wrong password"}, 401)
         

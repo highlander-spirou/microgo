@@ -1,5 +1,5 @@
-from flask import Flask, request, make_response
-from libs import download_func, convert_func, upload_func, sign_user, validate_signature
+from flask import Flask, request, make_response, send_file
+from libs import download_func, upload_func, sign_user, validate_signature, compress_img
 
 app = Flask(__name__)
 
@@ -18,34 +18,29 @@ def login_ctrl():
     resp.status_code = status_code
     return resp
 
-
-
-@app.route('/validate', methods=['POST'])
-def validate_ctrl():
-    pass
-
-
 @app.route('/upload', methods=['POST'])
 def upload_ctrl():
-    # try:
+    if "Authorization" not in request.headers:
+        return {'message': "Authorization not found"}, 401
     token = request.headers["Authorization"].split(" ")[1]
     re = validate_signature(token)
-    
-    return re
-    # except Exception as e:
-    #     return {'message': "con cặc"}, 401
-    # if (request.headers["Authorization"].split(" ")[1]):
-    #     return "con cặc", 401
-    # else:
-    #     print('cahfskaj')
-    #     # print(token)
-    # return "afskjhakj"
+    f = request.files['data']
+    upload_name = f"{re['username']}-{f.filename}"
+    f.save("./uploads/" + upload_name)
+    compress_img(upload_name)
+
+    return {"message": "Upload successfully"}, 200
 
 
 
 @app.route('/download', methods=['POST'])
 def download_ctrl():
-    pass
+    if "Authorization" not in request.headers:
+        return {'message': "Authorization not found"}, 401
+    token = request.headers["Authorization"].split(" ")[1]
+    re = validate_signature(token)
+    base_path = './uploads/optimized/' + re['username'] + '-' + request.get_json().get('filename')
+    return send_file(base_path)
 
 
 if __name__ == "__main__":
