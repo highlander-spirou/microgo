@@ -24,8 +24,12 @@ def upload_ctrl():
         return {'message': "Authorization not found"}, 401
     token = request.headers["Authorization"].split(" ")[1]
     re = validate_signature(token)
+    if re[1] != 200:
+        return re
+    
+    username = re[0]['message']['username']
     f = request.files['data']
-    upload_name = f"{re['username']}-{f.filename}"
+    upload_name = f"{username}-{f.filename}"
     f.save("./uploads/" + upload_name)
     compress_img(upload_name)
 
