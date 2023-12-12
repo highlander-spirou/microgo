@@ -1,42 +1,35 @@
-from dataclasses import dataclass
 from dtypes import api_response
 import jwt
 from datetime import datetime, timedelta
 from config import config
-@dataclass
-class User:
-    username = "Mập"
-    pwd = "Mập ngu"
-    is_admin = True
+from sqlalchemy import create_engine, text
 
-    def query(self, username):
-        if username != self.username:
-            raise Exception("Cannot found user")
-        return self
+uri = "mysql+mysqlconnector://root:secret@localhost:3306/authdb"
+
+engine = create_engine(uri)
+
+def get_user(username, pwd):
+    with engine.connect() as connection:
+        stmt = text("SELECT username FROM user WHERE username=:u and pwd=:p")
+        result = connection.execute(stmt, {"u":username, "p": pwd}).one_or_none()
+    
+    return result
+    
 
 
-db = User()
-
-
-def createJWT(payload:User, secret):
+def createJWT(payload:str, secret):
     return jwt.encode({
-        "username": payload.username,
-        "is_admin": payload.is_admin,
+        "username": payload,
         "exp": datetime.utcnow() + timedelta(minutes=100000),
         "iat": datetime.utcnow()
     }, key=secret)
+
 
 def sign_user(username, pwd) -> api_response:
     """
     Return a signed JWT or error
     """
-    try:
-        user = db.query(username)
-        print(user.username)
-        if pwd != user.pwd:
-            return ({"message": "Wrong password"}, 401)
-        
-        
-        return {"message": createJWT(user, config.get('JWT_SECRET'))}, 200
-    except Exception as e:
-        return ({"message": "User not found"}, 401)
+    result = get_user(username, pwd)
+    if result is None:
+        return ({"message": "Authentication failed"}, 401)
+    return {"message": createJWT(result[0], config.get('JWT_SECRET'))}, 200

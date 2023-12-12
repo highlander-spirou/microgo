@@ -5,7 +5,7 @@ networks:
 
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4.18
     networks:
       - db-network
     environment:

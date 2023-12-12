@@ -5,6 +5,7 @@ client = pymongo.MongoClient("mongodb://accessuser:accesspwd@localhost:27017?aut
 try:
     db = client['image_records']
     collections = db.list_collection_names()
+    print('Connect successfully')
     print(collections)
 except Exception as e:
     print(f"Connection failed: {e}")
@@ -12,4 +13,3 @@ except Exception as e:
 finally:
     # Close the connection
     client.close()
-    print("Connection closed.")
