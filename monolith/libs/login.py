@@ -22,7 +22,7 @@ def createJWT(payload:User, secret):
     return jwt.encode({
         "username": payload.username,
         "is_admin": payload.is_admin,
-        "exp": datetime.utcnow() + timedelta(minutes=150),
+        "exp": datetime.utcnow() + timedelta(minutes=100000),
         "iat": datetime.utcnow()
     }, key=secret)
 

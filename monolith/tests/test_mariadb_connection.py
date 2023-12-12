@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, text
 
-uri = "mysql+mysqlconnector://root:secret@localhost:3306/maindb"
+uri = "mysql+mysqlconnector://root:secret@localhost:3306/authdb"
 
 engine = create_engine(uri)
 
