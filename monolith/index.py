@@ -21,12 +21,29 @@ def login_ctrl():
 
 @app.route('/upload', methods=['POST'])
 def upload_ctrl():
-    resp = create_fs('a', b'asdasf', 'sth')
-    if resp[1] == 200:
-        fs_id = resp[0]
-        
+    if "Authorization" not in request.headers:
+        return {'message': "Authorization not found"}, 401
+    token = request.headers["Authorization"].split(" ")[1]
+    message, status_code = validate_signature(token)
+    if status_code != 200:
+        return message, status_code
+
+    f = request.files['data']
+    payload, status_code = create_fs(message['username'], f, f.filename)
+    if status_code != 200:
+        return payload, status_code
     else:
-        return resp
+        return {'message': f'Successfully upload image with ID {payload}'}, status_code
+
+
+
+    return "afjajkh"
+    # resp = create_fs('a', b'asdasf', 'sth')
+    # if resp[1] == 200:
+    #     fs_id = resp[0]
+        
+    # else:
+    #     return resp
     # if "Authorization" not in request.headers:
     #     return {'message': "Authorization not found"}, 401
     # token = request.headers["Authorization"].split(" ")[1]

@@ -7,4 +7,4 @@ class status_text(TypedDict):
 api_response: TypeAlias = Tuple[status_text, int]
 
 # Internal returns thats always return a 200 status code
-internal_response: TypeAlias = Tuple[any, 200]
+internal_response: TypeAlias = Tuple[any, int]
