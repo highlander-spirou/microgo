@@ -1,10 +1,14 @@
-from dtypes import api_response, internal_response
+from dtypes import Error
 import jwt
 from config import config
+from typing import TypedDict
 
-def validate_signature(sig) -> api_response | internal_response:
+class JWTPayload(TypedDict):
+    username:str
+
+def validate_signature(sig):
     try:
-        decoded=jwt.decode(sig, config.get("JWT_SECRET"), algorithms=["HS256"])
-        return decoded, 200
-    except Exception as e:
-        return {'message': 'Authentication failed'}, 401
+        decoded:JWTPayload = jwt.decode(sig, config.get("JWT_SECRET"), algorithms=["HS256"])
+        return decoded
+    except Exception:
+        return Error()

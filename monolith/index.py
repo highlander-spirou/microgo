@@ -1,6 +1,6 @@
-from flask import Flask, request, make_response, send_file
-from libs import sign_user, validate_signature, compress_img, create_fs, read_fs, delete_fs
-
+from flask import Flask, request, make_response, send_file, jsonify
+from libs import sign_user, validate_signature, upload_func, download_func, list_imgs
+from dtypes import Error
 app = Flask(__name__)
 
 @app.route('/login', methods=['POST'])
@@ -24,40 +24,13 @@ def upload_ctrl():
     if "Authorization" not in request.headers:
         return {'message': "Authorization not found"}, 401
     token = request.headers["Authorization"].split(" ")[1]
-    message, status_code = validate_signature(token)
-    if status_code != 200:
-        return message, status_code
-
-    f = request.files['data']
-    payload, status_code = create_fs(message['username'], f, f.filename)
-    if status_code != 200:
-        return payload, status_code
-    else:
-        return {'message': f'Successfully upload image with ID {payload}'}, status_code
-
-
-
-    return "afjajkh"
-    # resp = create_fs('a', b'asdasf', 'sth')
-    # if resp[1] == 200:
-    #     fs_id = resp[0]
-        
-    # else:
-    #     return resp
-    # if "Authorization" not in request.headers:
-    #     return {'message': "Authorization not found"}, 401
-    # token = request.headers["Authorization"].split(" ")[1]
-    # re = validate_signature(token)
-    # if re[1] != 200:
-    #     return re
+    verified_sig = validate_signature(token)
+    if isinstance(verified_sig, Error):
+        return {'message': "Authorization failed"}, 500
     
-    # username = re[0]['message']['username']
-    # f = request.files['data']
-    # upload_name = f"{username}-{f.filename}"
-    # f.save("./uploads/" + upload_name)
-    # compress_img(upload_name)
-
-    # return {"message": "Upload successfully"}, 200
+    f = request.files['data']
+    resp = upload_func(verified_sig['username'], f)
+    return resp
 
 
 
@@ -66,15 +39,32 @@ def download_ctrl():
     if "Authorization" not in request.headers:
         return {'message': "Authorization not found"}, 401
     token = request.headers["Authorization"].split(" ")[1]
-    re = validate_signature(token)
-    base_path = './uploads/optimized/' + re['username'] + '-' + request.get_json().get('filename')
-    return send_file(base_path)
+    verified_sig = validate_signature(token)
+    fs_id = request.get_json().get('fs_id')
+    if fs_id is None:
+        return {'message': 'Argument not found: `fs_id`'}, 400
+
+    resp = download_func(fs_id, verified_sig['username'])
+
+    if isinstance(resp, Error):
+        return {'message': 'ID not found'}, 400
+    if resp is None:
+        return {'message': 'Permission denied'}, 401
+    
+
+    return send_file(resp[1], download_name=resp[0])
 
 
-@app.route('/img_collection', methods=['POST'])
+@app.route('/img_collection', methods=['GET'])
 def img_collection_ctrl():
     if "Authorization" not in request.headers:
         return {'message': "Authorization not found"}, 401
+    
+    token = request.headers["Authorization"].split(" ")[1]
+    verified_sig = validate_signature(token)
+
+    metadict = list_imgs(verified_sig['username'])
+    return jsonify(metadict)
     
 
 if __name__ == "__main__":

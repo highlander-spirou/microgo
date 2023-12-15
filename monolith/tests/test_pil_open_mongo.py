@@ -14,7 +14,7 @@ try:
     # for i in metadata.find({}):
     #     print(i)
 
-    f = fs.get(ObjectId('6579f6ca203f12373933956b'))
+    f = fs.get(ObjectId('657b28141818edd87e28ddea'))
     with open('./sth.webp', 'wb+') as o:
         o.write(f.read())
 
