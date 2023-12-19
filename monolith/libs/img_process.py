@@ -14,7 +14,7 @@ def compress_img(fs_id: str, username:str, filename:str| None=None):
     img = Image.open(imgIO)
 
     # Mimic a very long task
-    sleep(5)
+    sleep(300)
 
     # Compress image and save to memory as bytes
     with BytesIO() as compressed_img:
