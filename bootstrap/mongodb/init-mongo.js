@@ -39,9 +39,6 @@ db.getSiblingDB('admin').auth(adminUser.user, adminUser.pwd);
 db = new Mongo().getDB("image_records");
 db.createCollection('images', { capped: false });
 
-// db = new Mongo().getDB("celery_results");
-// db.createCollection('results', { capped: false });
-
 
 // db.createUser({
 //     user: 'accessuser',

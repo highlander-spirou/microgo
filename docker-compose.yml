@@ -1,13 +1,13 @@
 version: '3.8'
 
 networks:
-  db-network:
+  main-network:
 
 services:
   mongodb:
     image: mongo:4.4.18
     networks:
-      - db-network
+      - main-network
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: secret
@@ -21,16 +21,27 @@ services:
   mariadb:
     image: mariadb:latest
     networks:
-      - db-network
+      - main-network
     environment:
-      MARIADB_ROOT_PASSWORD: "secret"
-      MARIADB_DATABASE: "authdb"
       MARIADB_USER: "root"
+      MARIADB_ROOT_PASSWORD: "secret"
+      # MARIADB_DATABASE: "authdb"
     ports:
       - "3306:3306"
     volumes:
       - mariadb-data:/var/lib/mysql
       - ./bootstrap/mariadb:/docker-entrypoint-initdb.d
+
+  message_broker:
+    build: 
+      context: ./rabbitmq_image
+      dockerfile: Dockerfile
+    container_name: message_broker
+    networks:
+      - main-network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
 volumes:
   mongo-data:

@@ -1,0 +1,1 @@
+from controllers.upload import upload_func

@@ -1,5 +1,5 @@
 from flask import Flask, request, make_response, send_file, jsonify
-from libs import sign_user, validate_signature, upload_func, download_func, list_imgs
+from lib import sign_user, validate_signature, upload_func, download_func, list_imgs
 from dtypes import Error
 app = Flask(__name__)
 

@@ -4,6 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["highlander-spirou <highlandetspirou2812@gmail.com>"]
 readme = "README.md"
+packages = [
+    { include = "file_access", from="lib" },
+    { include = "message_queue", from="lib" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
