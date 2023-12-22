@@ -10,6 +10,9 @@ class Code(str, Enum):
     JWT_Error = "JWT sign failed"
     File_Unauth = "File Unauthenticated"
     Upload_Error = "Upload Image Error"
+    Download_Unauth = "Unauthenticated to download this file"
+    File_ReadError = "Cannot retrieve file"
+    File_CreateError = "Cannot create file"
 
 
 @dataclass

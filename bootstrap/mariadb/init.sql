@@ -13,6 +13,7 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (username, pwd) VALUES ('Mập', 'Mập khùng');
+INSERT INTO users (username, pwd) VALUES ('Rex', 'Rex siu super');
 
 REVOKE DROP ON authdb.* FROM 'accessuser'@'%';
 

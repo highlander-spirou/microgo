@@ -4,6 +4,16 @@ from bson import ObjectId
 from werkzeug.datastructures import FileStorage
 from dataclasses import dataclass
 from errors import Error, Code, ConnectionFailure
+from typing import TypedDict
+from datetime import datetime
+
+class Metadict(TypedDict):
+    id: str
+    filename: str
+    tag: str
+    original: str | None
+    uploadDate: str
+
 
 @dataclass
 class FileAccess:
@@ -34,7 +44,7 @@ class FileAccess:
             return str(fs_id)
         except Exception as e:
             print(str(e))
-            return Error(Code.Upload_Error)
+            return Error(Code.File_CreateError)
 
 
     def read_fs(self, fs_id:str):
@@ -46,7 +56,7 @@ class FileAccess:
             return f.filename, f.read()
         except Exception as e:
             print(str(e))
-            return Error(Code.Upload_Error)
+            return Error(Code.File_ReadError)
 
 
     def delete_fs(self, fs_id:str):
@@ -71,3 +81,18 @@ class FileAccess:
         fs_files = self.db.get_collection('fs.files')
         metadata = fs_files.find({by: value})
         return metadata
+
+    def list_imgs(self, owner_id: str):
+        metadict:list[Metadict] = []
+        for i in self.filter_fs('owner_id', owner_id):
+            format_string = "%H:%M on %d/%m/%Y"
+            metadict.append({
+                'id': str(i.get('_id')),
+                'filename': i.get('filename'),
+                'tag': i.get('tag'),
+                'uploadDate': datetime.strftime(i.get('uploadDate'), format_string),
+                'original': i.get('original')
+                })
+        return metadict
+    
+    

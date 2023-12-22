@@ -59,9 +59,9 @@
     {
       "user": "accessuser",
       "vhost": "first-vhost",
-      "configure": "^celery",
-      "write": "^celery",
-      "read": "^celery"
+      "configure": "^.*celery.*$",
+      "write": "^.*celery.*$",
+      "read": "^.*celery.*$"
     }
   ]
 }

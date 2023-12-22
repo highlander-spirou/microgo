@@ -1,6 +1,13 @@
 from celery import Celery
 from dataclasses import dataclass
 
+def get_celery_worker_status(app):
+    print('Checking connection to Celery worker and broker ...')
+    inspection = app.control.inspect()
+    if inspection.ping() is None:
+        print('Error set up celery: Worker or Broker is not available')
+        exit()
+
 @dataclass
 class TaskProducer:
     config: dict
@@ -24,13 +31,10 @@ class TaskProducer:
         self.task_producer.conf.task_routes = {
             "process_img": {"exchange": "celery_images", "routing_key": "celery_images"},
         }
+        get_celery_worker_status(self.task_producer)
 
-    def dispatch_img_task(self, fs_id):
-        self.task_producer.send_task('img_process', kwargs={"fs_id": fs_id}, route_name='process_img')
-
-# task_producer = Celery('task_producer', broker=BROKER_URL, backend=BACKEND_URL)
-
-
-# if __name__ == '__main__':
-#     print('dispatching task')
-#     task = task_producer.send_task('log_arg', kwargs={"arg": 'hello world'}, route_name='log_arg')
+    def dispatch_img_task(self, fs_id, owner_id):
+        self.task_producer.send_task('img_process', 
+                                     route_name='process_img',
+                                     kwargs={"fs_id": fs_id, "owner_id": owner_id}, 
+                                     )

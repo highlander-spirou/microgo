@@ -1,1 +1,2 @@
 from controllers.upload import upload_func
+from controllers.download import download_func

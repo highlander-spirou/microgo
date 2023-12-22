@@ -26,7 +26,6 @@ class UserAuthentication:
             print('Check for MariaDB connection ...')
             connection = self.engine.connect()
             connection.close()
-            print('MariaDB connection success')
         except DatabaseError:
             print('Cannot connect to MariaDB, closing the server ...')
             exit()
