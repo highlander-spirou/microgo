@@ -1,1 +1,0 @@
-curl -X POST --user name:password http://localhost:5000/login
