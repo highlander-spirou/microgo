@@ -2,12 +2,13 @@ from pymongo import MongoClient
 from gridfs import GridFS
 from typing import TypeAlias
 from werkzeug.datastructures import FileStorage
-from libs.file_access import create_fs, read_fs
+from libs.file_access import create_fs
 from dtypes import Error, api_response
 from libs.img_process import compress_img
+from config import access_user, access_pwd, mongodb_host
 
 
-client = MongoClient("mongodb://accessuser:accesspwd@localhost:27017?authSource=image_records")
+client = MongoClient(f"mongodb://{access_user}:{access_pwd}@{mongodb_host}:27017?authSource=admin")
 db = client['image_records']
 fs = GridFS(db)
 

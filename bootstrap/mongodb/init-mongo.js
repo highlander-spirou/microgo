@@ -1,4 +1,4 @@
-db.createUser({
+var adminUser = {
     user: 'accessuser',
     pwd: 'accesspwd',
     roles: [
@@ -6,9 +6,15 @@ db.createUser({
             role: 'readWrite',
             db: 'image_records',
         },
+
     ],
-});
+}
+
+var adminDb = db.getSiblingDB('admin');
+
+adminDb.createUser(adminUser);
+
+db.getSiblingDB('admin').auth(adminUser.user, adminUser.pwd);
 
 db = new Mongo().getDB("image_records");
-
 db.createCollection('images', { capped: false });

@@ -10,7 +10,8 @@ def login_ctrl():
     
     message, status_code = sign_user(request.authorization.username, request.authorization.password)
     if status_code == 200:
-        resp = make_response({'message': 'Login sucess'})
+        print(message)
+        resp = make_response({'message': 'Login sucess', 'token': message['message']})
         resp.headers['Authorization'] = 'Bearer ' + message['message']
     else:
         resp = make_response(message)
@@ -26,9 +27,9 @@ def upload_ctrl():
     token = request.headers["Authorization"].split(" ")[1]
     verified_sig = validate_signature(token)
     if isinstance(verified_sig, Error):
-        return {'message': "Authorization failed"}, 500
+        return {'message': "Authorization failed"}, 401
     
-    f = request.files['data']
+    f = request.files.get('data')
     resp = upload_func(verified_sig['username'], f)
     return resp
 
@@ -68,4 +69,5 @@ def img_collection_ctrl():
     
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", debug=True)
+    from config import config
+    app.run("0.0.0.0", port=5000, debug=config.get('RUN_MODE') == 'development')

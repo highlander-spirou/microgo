@@ -18,19 +18,41 @@ services:
       - mongo-data:/data/db
       - ./bootstrap/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
 
+  # mariadb:
+  #   image: mariadb:latest
+  #   networks:
+  #     - db-network
+  #   environment:
+  #     MARIADB_USER: "root"
+  #     MARIADB_ROOT_PASSWORD: "secret"
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - mariadb-data:/var/lib/mysql
+  #     - ./bootstrap/mariadb:/docker-entrypoint-initdb.d
+
   mariadb:
     image: mariadb:latest
     networks:
       - db-network
     environment:
-      MARIADB_ROOT_PASSWORD: "secret"
-      MARIADB_DATABASE: "authdb"
       MARIADB_USER: "root"
+      MARIADB_ROOT_PASSWORD: "secret"
+      # MARIADB_DATABASE: "authdb"
     ports:
       - "3306:3306"
     volumes:
       - mariadb-data:/var/lib/mysql
       - ./bootstrap/mariadb:/docker-entrypoint-initdb.d
+
+  my-server:
+    build: 
+      dockerfile: Dockerfile
+    container_name: monolith_server
+    networks:
+      - db-network
+    ports:
+      - "5000:5000"
 
 volumes:
   mongo-data:

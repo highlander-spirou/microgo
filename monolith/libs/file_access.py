@@ -6,8 +6,10 @@ from gridfs import GridFS
 from dtypes import api_response, Error
 from bson import ObjectId
 from werkzeug.datastructures import FileStorage
+from config import access_user, access_pwd, mongodb_host
 
-client = MongoClient("mongodb://accessuser:accesspwd@localhost:27017?authSource=image_records")
+
+client = MongoClient(f"mongodb://{access_user}:{access_pwd}@{mongodb_host}:27017?authSource=admin")
 db = client['image_records']
 fs = GridFS(db)
 

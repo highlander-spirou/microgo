@@ -1,6 +1,6 @@
 from dtypes import Error
 import jwt
-from config import config
+from config import jwt_secret
 from typing import TypedDict
 
 class JWTPayload(TypedDict):
@@ -8,7 +8,7 @@ class JWTPayload(TypedDict):
 
 def validate_signature(sig):
     try:
-        decoded:JWTPayload = jwt.decode(sig, config.get("JWT_SECRET"), algorithms=["HS256"])
+        decoded:JWTPayload = jwt.decode(sig, jwt_secret, algorithms=["HS256"])
         return decoded
     except Exception:
         return Error()

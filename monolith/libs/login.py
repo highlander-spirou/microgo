@@ -1,16 +1,17 @@
 from dtypes import api_response
 import jwt
 from datetime import datetime, timedelta
-from config import config
+from config import access_user, access_pwd, mariadb_host
 from sqlalchemy import create_engine, text
+from config import access_user, access_pwd, mariadb_host, jwt_secret
 
-uri = "mysql+mysqlconnector://root:secret@localhost:3306/authdb"
+uri = f"mysql+mysqlconnector://{access_user}:{access_pwd}@{mariadb_host}:3306/authdb"
 
 engine = create_engine(uri)
 
 def get_user(username, pwd):
     with engine.connect() as connection:
-        stmt = text("SELECT username FROM user WHERE username=:u and pwd=:p")
+        stmt = text("SELECT username FROM users WHERE username=:u and pwd=:p")
         result = connection.execute(stmt, {"u":username, "p": pwd}).one_or_none()
     
     return result
@@ -32,4 +33,4 @@ def sign_user(username, pwd) -> api_response:
     result = get_user(username, pwd)
     if result is None:
         return ({"message": "Authentication failed"}, 401)
-    return {"message": createJWT(result[0], config.get('JWT_SECRET'))}, 200
+    return {"message": createJWT(result[0], jwt_secret)}, 200

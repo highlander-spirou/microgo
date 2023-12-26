@@ -8,25 +8,14 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 
-
-[tool.poetry.group.auth-srv.dependencies]
-pyjwt = "^2.8.0"
+[tool.poetry.group.monolith.dependencies]
 flask = "^3.0.0"
+pymongo = "^4.6.1"
+pillow = "^10.1.0"
+pyjwt = "^2.8.0"
+python-dotenv = "^1.0.0"
 sqlalchemy = "^2.0.23"
 mysql-connector-python = "^8.2.0"
-python-dotenv = "^1.0.0"
-
-
-[tool.poetry.group.gateway-srv.dependencies]
-flask = "^3.0.0"
-pika = "^1.3.2"
-python-dotenv = "^1.0.0"
-flask-pymongo = "^2.3.0"
-requests = "^2.31.0"
-
-
-[tool.poetry.group.img-srv.dependencies]
-pillow = "^10.1.0"
 
 [build-system]
 requires = ["poetry-core"]
